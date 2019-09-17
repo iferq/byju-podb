@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
+    flavorDimensions "default"
     defaultConfig {
         applicationId "com.edmobilelabs.tts"
         minSdkVersion 21
@@ -14,6 +15,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        production {
+            applicationId "com.edmobilelabs.tts"
         }
     }
 }
