@@ -3,6 +3,7 @@
     <string name="google">Google</string>
     <string name="polly">AWS Polly</string>
     <string name="watson">IBM Watson</string>
+    <string name="microsoft">Microsoft</string>
     <string name="enter_text">Enter text</string>
     <string name="def_text_to_speak">Help me Obi Wan Kenobi , you are my only hope</string>
 </resources>

@@ -6,12 +6,15 @@ import android.support.v7.widget.AppCompatEditText;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.CompoundButton;
+import android.widget.GridLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.edmobilelabs.tts.R;
+import com.edmobilelabs.tts.Utils.ViewUtils;
 import com.edmobilelabs.tts.controller.AmazonController;
 import com.edmobilelabs.tts.controller.GoogleController;
+import com.edmobilelabs.tts.controller.MicrosoftCSController;
 import com.edmobilelabs.tts.controller.TTSController;
 import com.edmobilelabs.tts.controller.WatsonController;
 
@@ -20,8 +23,9 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     private static final String TAG = "MainActivity";
 
     private ToggleButton btnGoogle, btnWatson;
-    private ToggleButton btnPolly;
+    private ToggleButton btnPolly, btnMicrosoft;
     private AppCompatEditText etTextToRead;
+    private GridLayout glServices;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,14 +36,17 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     }
 
     private void initView() {
+        glServices = findViewById(R.id.glServices);
         btnGoogle = findViewById(R.id.btnGoogle);
         btnPolly = findViewById(R.id.btnPolly);
         btnWatson = findViewById(R.id.btnWatson);
+        btnMicrosoft = findViewById(R.id.btnMicrosoft);
         etTextToRead = findViewById(R.id.etTextToRead);
 
         btnGoogle.setOnCheckedChangeListener(this);
         btnPolly.setOnCheckedChangeListener(this);
         btnWatson.setOnCheckedChangeListener(this);
+        btnMicrosoft.setOnCheckedChangeListener(this);
 
     }
 
@@ -47,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         GoogleController.getInstance().init(this);
         AmazonController.getInstance().init(this);
         WatsonController.getInstance().init(this);
+        MicrosoftCSController.getInstance().init(this);
     }
 
     @Override
@@ -66,29 +74,31 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         String textToSpeak = etTextToRead.getText().toString();
 
         if (isChecked) {
-
+            ViewUtils.toggleButtonCheckedStatusExcept(glServices, buttonView.getId(), false);
             switch (buttonView.getId()) {
-
                 case R.id.btnGoogle:
                     GoogleController.getInstance().speakOut(textToSpeak);
                     AmazonController.getInstance().stop();
                     WatsonController.getInstance().stop();
-                    btnPolly.setChecked(false);
-                    btnWatson.setChecked(false);
+                    MicrosoftCSController.getInstance().stop();
                     break;
                 case R.id.btnPolly:
                     AmazonController.getInstance().speakOut(textToSpeak);
                     GoogleController.getInstance().stop();
                     WatsonController.getInstance().stop();
-                    btnGoogle.setChecked(false);
-                    btnWatson.setChecked(false);
+                    MicrosoftCSController.getInstance().stop();
                     break;
                 case R.id.btnWatson:
                     WatsonController.getInstance().speakOut(textToSpeak);
                     GoogleController.getInstance().stop();
                     AmazonController.getInstance().stop();
-                    btnGoogle.setChecked(false);
-                    btnPolly.setChecked(false);
+                    MicrosoftCSController.getInstance().stop();
+                    break;
+                case R.id.btnMicrosoft:
+                    MicrosoftCSController.getInstance().speakOut(textToSpeak);
+                    WatsonController.getInstance().stop();
+                    GoogleController.getInstance().stop();
+                    AmazonController.getInstance().stop();
                     break;
             }
         } else {
@@ -102,6 +112,9 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                     break;
                 case R.id.btnWatson:
                     WatsonController.getInstance().stop();
+                    break;
+                case R.id.btnMicrosoft:
+                    MicrosoftCSController.getInstance().stop();
                     break;
             }
         }
@@ -121,24 +134,19 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                btnGoogle.setChecked(false);
-                btnPolly.setChecked(false);
-                btnWatson.setChecked(false);
+                ViewUtils.toggleButtonCheckedStatus(glServices, false);
             }
         });
     }
 
     @Override
-    public void onSpeechError(String error) {
+    public void onSpeechError(final String error) {
         Log.e(TAG, "onSpeechError " + error);
-        Toast.makeText(this, "onSpeechError " + error, Toast.LENGTH_SHORT).show();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                btnGoogle.setChecked(false);
-                btnPolly.setChecked(false);
-                btnWatson.setChecked(false);
-
+                Toast.makeText(MainActivity.this, "onSpeechError " + error, Toast.LENGTH_SHORT).show();
+                ViewUtils.toggleButtonCheckedStatus(glServices, false);
             }
         });
     }
