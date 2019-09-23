@@ -15,6 +15,7 @@ import com.edmobilelabs.tts.Utils.ViewUtils;
 import com.edmobilelabs.tts.controller.AmazonController;
 import com.edmobilelabs.tts.controller.GoogleController;
 import com.edmobilelabs.tts.controller.MicrosoftCSController;
+import com.edmobilelabs.tts.controller.RTWController;
 import com.edmobilelabs.tts.controller.TTSController;
 import com.edmobilelabs.tts.controller.WatsonController;
 
@@ -22,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
     private static final String TAG = "MainActivity";
 
-    private ToggleButton btnGoogle, btnWatson;
+    private ToggleButton btnGoogle, btnWatson, btnRTW;
     private ToggleButton btnPolly, btnMicrosoft;
     private AppCompatEditText etTextToRead;
     private GridLayout glServices;
@@ -42,12 +43,13 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         btnWatson = findViewById(R.id.btnWatson);
         btnMicrosoft = findViewById(R.id.btnMicrosoft);
         etTextToRead = findViewById(R.id.etTextToRead);
+        btnRTW = findViewById(R.id.btnRTW);
 
         btnGoogle.setOnCheckedChangeListener(this);
         btnPolly.setOnCheckedChangeListener(this);
         btnWatson.setOnCheckedChangeListener(this);
         btnMicrosoft.setOnCheckedChangeListener(this);
-
+        btnRTW.setOnCheckedChangeListener(this);
     }
 
     private void init() {
@@ -55,11 +57,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         AmazonController.getInstance().init(this);
         WatsonController.getInstance().init(this);
         MicrosoftCSController.getInstance().init(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
+        RTWController.getInstance().init(this);
     }
 
     @Override
@@ -81,21 +79,32 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                     AmazonController.getInstance().stop();
                     WatsonController.getInstance().stop();
                     MicrosoftCSController.getInstance().stop();
+                    RTWController.getInstance().speakOut(textToSpeak);
                     break;
                 case R.id.btnPolly:
                     AmazonController.getInstance().speakOut(textToSpeak);
                     GoogleController.getInstance().stop();
                     WatsonController.getInstance().stop();
                     MicrosoftCSController.getInstance().stop();
+                    RTWController.getInstance().stop();
                     break;
                 case R.id.btnWatson:
                     WatsonController.getInstance().speakOut(textToSpeak);
                     GoogleController.getInstance().stop();
                     AmazonController.getInstance().stop();
                     MicrosoftCSController.getInstance().stop();
+                    RTWController.getInstance().stop();
                     break;
                 case R.id.btnMicrosoft:
                     MicrosoftCSController.getInstance().speakOut(textToSpeak);
+                    WatsonController.getInstance().stop();
+                    GoogleController.getInstance().stop();
+                    AmazonController.getInstance().stop();
+                    RTWController.getInstance().stop();
+                    break;
+                case R.id.btnRTW:
+                    RTWController.getInstance().speakOut(textToSpeak);
+                    MicrosoftCSController.getInstance().stop();
                     WatsonController.getInstance().stop();
                     GoogleController.getInstance().stop();
                     AmazonController.getInstance().stop();
@@ -115,6 +124,9 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                     break;
                 case R.id.btnMicrosoft:
                     MicrosoftCSController.getInstance().stop();
+                    break;
+                case R.id.btnRTW:
+                    RTWController.getInstance().stop();
                     break;
             }
         }
