@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                     AmazonController.getInstance().stop();
                     WatsonController.getInstance().stop();
                     MicrosoftCSController.getInstance().stop();
-                    RTWController.getInstance().speakOut(textToSpeak);
+                    RTWController.getInstance().stop();
                     break;
                 case R.id.btnPolly:
                     AmazonController.getInstance().speakOut(textToSpeak);
